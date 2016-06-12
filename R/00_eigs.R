@@ -47,16 +47,16 @@
 ##' @param sigma Shift parameter. See section \strong{Shift-And-Invert Mode}.
 ##' @param opts Control parameters related to the computing
 ##'             algorithm. See \strong{Details} below.
-##' @param \dots Currently not used.
+##' @param \dots Arguments for specialized S3 function calls, for example
+##'              \code{lower}, \code{n} and \code{args}.
 ##' @param lower For symmetric matrices, should the lower triangle
 ##'              or upper triangle be used.
 ##' @param n Only used when \code{A} is a function, to specify the
 ##'          dimension of the implicit matrix. See section
 ##'          \strong{Function Interface} for details.
 ##' @param args Only used when \code{A} is a function. This argument
-##'             will be passed to the \code{A} function containing any
-##'             extra data. See section \strong{Function Interface}
-##'             for details.
+##'             will be passed to the \code{A} function when it is called.
+##'             See section \strong{Function Interface} for details.
 ##'
 ##' @details The \code{which} argument is a character string
 ##' that specifies the type of eigenvalues to be computed.
@@ -118,7 +118,7 @@
 ##' eigenvalues of \eqn{A} that have the smallest magnitude. The result of
 ##' using \code{which = "LM", sigma = 0} will be the same as
 ##' \code{which = "SM"}, but the former one is preferable
-##' in that ARPACK is good at finding large
+##' in that \code{eigs()} is good at finding large
 ##' eigenvalues rather than small ones. More explanation of the
 ##' shift-and-invert mode can be found in the SciPy document,
 ##' \url{http://docs.scipy.org/doc/scipy/reference/tutorial/arpack.html}.
@@ -166,7 +166,7 @@
 ##' eigs(A1, k)
 ##' eigs(A2, k, opts = list(retvec = FALSE))  ## eigenvalues only
 ##'
-##' ## sparse matrices
+##' ## Sparse matrices
 ##' A1[sample(n^2, n^2 / 2)] = 0
 ##' A3 = as(A1, "dgCMatrix")
 ##' A4 = as(A1, "dgRMatrix")
@@ -174,33 +174,31 @@
 ##' eigs(A3, k)
 ##' eigs(A4, k)
 ##'
-##' ## function interface
+##' ## Function interface
 ##' f = function(x, args)
 ##' {
 ##'     as.numeric(args %*% x)
 ##' }
 ##' eigs(f, k, n = n, args = A3)
 ##'
-##' ## symmetric matrices have real eigenvalues
+##' ## Symmetric matrices have real eigenvalues
 ##' A5 = crossprod(A1)
 ##' eigs_sym(A5, k)
 ##'
-##' ## find the smallest (in absolute value) k eigenvalues of A5
+##' ## Find the smallest (in absolute value) k eigenvalues of A5
 ##' eigs_sym(A5, k, which = "SM")
 ##'
-##' ## another way to do this: use the sigma argument
+##' ## Another way to do this: use the sigma argument
 ##' eigs_sym(A5, k, sigma = 0)
 ##'
 ##' ## The results should be the same,
 ##' ## but the latter method is far more stable on large matrices
-eigs <- function(A, k, which = "LM", sigma = NULL,
-                 opts = list(), ...)
+eigs <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...)
     UseMethod("eigs")
 
 ##' @rdname eigs
 ##' @export
-eigs.matrix <- function(A, k, which = "LM", sigma = NULL,
-                        opts = list(), ...)
+eigs.matrix <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...)
 {
     if(isSymmetric(A) &
            which %in% c("LM", "SM", "LR", "SR") &
@@ -208,17 +206,16 @@ eigs.matrix <- function(A, k, which = "LM", sigma = NULL,
     {
         if(which == "LR")  which = "LA"
         if(which == "SR")  which = "SA"
-        eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_matrix",
+        eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_matrix",
                       extra_args = list(use_lower = TRUE))
     } else {
-        eigs.real_gen(A, nrow(A), k, which, sigma, opts, ..., mattype = "matrix")
+        eigs_real_gen(A, nrow(A), k, which, sigma, opts, mattype = "matrix")
     }
 }
 
 ##' @rdname eigs
 ##' @export
-eigs.dgeMatrix <- function(A, k, which = "LM", sigma = NULL,
-                           opts = list(), ...)
+eigs.dgeMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...)
 {
     if(isSymmetric(A) &
            which %in% c("LM", "SM", "LR", "SR") &
@@ -226,17 +223,16 @@ eigs.dgeMatrix <- function(A, k, which = "LM", sigma = NULL,
     {
         if(which == "LR")  which = "LA"
         if(which == "SR")  which = "SA"
-        eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_dgeMatrix",
+        eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_dgeMatrix",
                       extra_args = list(use_lower = TRUE))
     } else {
-        eigs.real_gen(A, nrow(A), k, which, sigma, opts, ..., mattype = "dgeMatrix")
+        eigs_real_gen(A, nrow(A), k, which, sigma, opts, mattype = "dgeMatrix")
     }
 }
 
 ##' @rdname eigs
 ##' @export
-eigs.dgCMatrix <- function(A, k, which = "LM", sigma = NULL,
-                           opts = list(), ...)
+eigs.dgCMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...)
 {
     if(isSymmetric(A) &
            which %in% c("LM", "SM", "LR", "SR") &
@@ -244,35 +240,32 @@ eigs.dgCMatrix <- function(A, k, which = "LM", sigma = NULL,
     {
         if(which == "LR")  which = "LA"
         if(which == "SR")  which = "SA"
-        eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_dgCMatrix",
+        eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_dgCMatrix",
                       extra_args = list(use_lower = TRUE))
     } else {
-        eigs.real_gen(A, nrow(A), k, which, sigma, opts, ..., mattype = "dgCMatrix")
+        eigs_real_gen(A, nrow(A), k, which, sigma, opts, mattype = "dgCMatrix")
     }
 }
 
 ##' @rdname eigs
 ##' @export
 ## isSymmetric() does not support dgRMatrix
-eigs.dgRMatrix <- function(A, k, which = "LM", sigma = NULL,
-                           opts = list(), ...)
-    eigs.real_gen(A, nrow(A), k, which, sigma, opts, ..., mattype = "dgRMatrix")
+eigs.dgRMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...)
+    eigs_real_gen(A, nrow(A), k, which, sigma, opts, mattype = "dgRMatrix")
 
 ##' @rdname eigs
 ##' @export
-eigs.dsyMatrix <- function(A, k, which = "LM", sigma = NULL,
-                           opts = list(), ...)
-    eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "dsyMatrix",
+eigs.dsyMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...)
+    eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "dsyMatrix",
                   extra_args = list(use_lower = (A@uplo == "L")))
 
 ##' @rdname eigs
 ##' @export
-eigs.function <- function(A, k, which = "LM", sigma = NULL,
-                          opts = list(), ...,
+eigs.function <- function(A, k, which = "LM", sigma = NULL, opts = list(), ...,
                           n = NULL, args = NULL)
-    eigs.real_gen(A, as.integer(n), k, which, sigma, opts, ..., mattype = "function",
-                  extra_args = list(fun_args = args))
-
+    eigs_real_gen(A, as.integer(n), k, which, sigma, opts, mattype = "function",
+                  extra_args = list(Atrans = function() NULL, fun_args = args))
+## Atrans is just a fake function here since it is only used in svds()
 
 
 ##' @rdname eigs
@@ -286,28 +279,28 @@ eigs_sym <- function(A, k, which = "LM", sigma = NULL, opts = list(),
 eigs_sym.matrix <- function(A, k, which = "LM", sigma = NULL, opts = list(),
                             lower = TRUE, ...)
 {
-    eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_matrix",
+    eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_matrix",
                   extra_args = list(use_lower = as.logical(lower)))
 }
 
 eigs_sym.dgeMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(),
                                lower = TRUE, ...)
 {
-    eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_dgeMatrix",
+    eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_dgeMatrix",
                   extra_args = list(use_lower = as.logical(lower)))
 }
 
 eigs_sym.dgCMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(),
                                lower = TRUE, ...)
 {
-    eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_dgCMatrix",
+    eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_dgCMatrix",
                   extra_args = list(use_lower = as.logical(lower)))
 }
 
 eigs_sym.dgRMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(),
                                lower = TRUE, ...)
 {
-    eigs.real_sym(A, nrow(A), k, which, sigma, opts, ..., mattype = "sym_dgRMatrix",
+    eigs_real_sym(A, nrow(A), k, which, sigma, opts, mattype = "sym_dgRMatrix",
                   extra_args = list(use_lower = as.logical(lower)))
 }
 
@@ -316,8 +309,9 @@ eigs_sym.dgRMatrix <- function(A, k, which = "LM", sigma = NULL, opts = list(),
 eigs_sym.function <- function(A, k, which = "LM", sigma = NULL, opts = list(),
                               lower = TRUE, ..., n = NULL, args = NULL)
 {
-    eigs.real_sym(A, as.integer(n), k, which, sigma, opts, ..., mattype = "function",
-                  extra_args = list(fun_args = args))
+    eigs_real_sym(A, as.integer(n), k, which, sigma, opts, mattype = "function",
+                  extra_args = list(Atrans = function() NULL, fun_args = args))
+    ## Atrans is just a fake function here since it is only used in svds()
 }
 
 

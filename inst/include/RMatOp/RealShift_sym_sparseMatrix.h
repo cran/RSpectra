@@ -13,9 +13,9 @@ private:
     typedef Eigen::SimplicialLDLT< Eigen::SparseMatrix<double, Eigen::ColMajor> > SpLDLSolver;
 
     // Map to Eigen sparse matrix
-    MapSpMat mat;
-    const int n;
-    const char uplo;
+    MapSpMat    mat;
+    const int   n;
+    const char  uplo;
     SpLDLSolver solver;
 
 public:
@@ -25,13 +25,13 @@ public:
         uplo(uplo_)
     {}
 
-    int rows() { return n; }
-    int cols() { return n; }
+    int rows() const { return n; }
+    int cols() const { return n; }
 
     void set_shift(double sigma)
     {
         solver.setShift(-sigma);
-        
+
         if(uplo == 'L')
             solver.compute(mat.template selfadjointView<Eigen::Lower>());
         else
@@ -39,7 +39,7 @@ public:
     }
 
     // y_out = inv(A - sigma * I) * x_in
-    void perform_op(double *x_in, double *y_out)
+    void perform_op(double* x_in, double* y_out)
     {
         MapVec x(x_in, n);
         MapVec y(y_out, n);

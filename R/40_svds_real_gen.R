@@ -1,8 +1,13 @@
-svds.real_gen <- function(A, k, nu, nv, opts, ..., mattype,
-                          extra_args = list())
+svds_real_gen <- function(A, k, nu, nv, opts, mattype, extra_args = list())
 {
-    m = nrow(A)
-    n = ncol(A)
+    if (mattype == "function")
+    {
+        m = as.integer(extra_args$dim[1])
+        n = as.integer(extra_args$dim[2])
+    } else {
+        m = nrow(A)
+        n = ncol(A)
+    }
     wd = min(m, n)
 
     # Check for matrices that are too small
@@ -19,8 +24,7 @@ svds.real_gen <- function(A, k, nu, nv, opts, ..., mattype,
     }
 
     # Matrix will be passed to C++, so we need to check the type.
-    # ARPACK only supports matrices in float or double, so we need
-    # to do the conversion if A is stored other than double.
+    # Convert the matrix type if A is stored other than double.
     #
     # However, for sparse matrices defined in Matrix package,
     # they are always double, so we can omit this check.
@@ -37,19 +41,19 @@ svds.real_gen <- function(A, k, nu, nv, opts, ..., mattype,
     if (nu < 0 | nv < 0 | nu > k | nv > k)
         stop("'nu' and 'nv' must satisfy 0 <= nu <= k and 0 <= nv <= k")
 
-    # Arguments to be passed to ARPACK
-    arpack.param = list(ncv = min(wd, max(2 * k + 1, 20)),
-                        tol = 1e-10,
-                        maxitr = 1000)
+    # Arguments to be passed to Spectra
+    spectra.param = list(ncv = min(wd, max(2 * k + 1, 20)),
+                         tol = 1e-10,
+                         maxitr = 1000)
 
     # Update parameters from 'opts' argument
-    arpack.param[names(opts)] = opts
+    spectra.param[names(opts)] = opts
 
     # Any other arguments passed to C++ code
-    arpack.param = c(arpack.param, as.list(extra_args))
+    spectra.param = c(spectra.param, as.list(extra_args))
 
     # Check the value of 'ncv'
-    if (arpack.param$ncv <= k | arpack.param$ncv > wd)
+    if (spectra.param$ncv <= k | spectra.param$ncv > wd)
         stop("'opts$ncv' must be > k and <= min(nrow(A), ncol(A))")
 
     # Call the C++ function
@@ -57,7 +61,7 @@ svds.real_gen <- function(A, k, nu, nv, opts, ..., mattype,
                 A,
                 as.integer(m), as.integer(n),
                 as.integer(k), as.integer(nu), as.integer(nv),
-                as.list(arpack.param),
+                as.list(spectra.param),
                 as.integer(MAT_TYPE[mattype]),
                 PACKAGE = "RSpectra")
 

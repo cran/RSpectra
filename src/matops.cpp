@@ -3,7 +3,7 @@
 
 MatProd* get_mat_prod_op(SEXP mat, int nrow, int ncol, SEXP extra_arg, int mat_type)
 {
-    MatProd *op;
+    MatProd* op;
 
     Rcpp::List args(extra_arg);
 
@@ -53,8 +53,9 @@ MatProd* get_mat_prod_op(SEXP mat, int nrow, int ncol, SEXP extra_arg, int mat_t
         break;
     case FUNCTION:
         {
+        SEXP trans    = args["Atrans"];
         SEXP fun_args = args["fun_args"];
-        op = new MatProd_function(mat, nrow, fun_args);
+        op = new MatProd_function(mat, trans, nrow, ncol, fun_args);
         }
         break;
     default:
@@ -66,9 +67,9 @@ MatProd* get_mat_prod_op(SEXP mat, int nrow, int ncol, SEXP extra_arg, int mat_t
     return op;
 }
 
-RealShift* eigs_sym_get_real_shift_op(SEXP mat, int n, SEXP extra_arg, int mat_type)
+RealShift* get_real_shift_op_sym(SEXP mat, int n, SEXP extra_arg, int mat_type)
 {
-    RealShift *op;
+    RealShift* op;
 
     Rcpp::List args(extra_arg);
 
@@ -125,9 +126,9 @@ RealShift* eigs_sym_get_real_shift_op(SEXP mat, int n, SEXP extra_arg, int mat_t
     return op;
 }
 
-RealShift* eigs_gen_get_real_shift_op(SEXP mat, int n, SEXP extra_arg, int mat_type)
+RealShift* get_real_shift_op_gen(SEXP mat, int n, SEXP extra_arg, int mat_type)
 {
-    RealShift *op;
+    RealShift* op;
 
     Rcpp::List args(extra_arg);
 
@@ -156,7 +157,7 @@ RealShift* eigs_gen_get_real_shift_op(SEXP mat, int n, SEXP extra_arg, int mat_t
 
 ComplexShift* get_complex_shift_op(SEXP mat, int n, SEXP extra_arg, int mat_type)
 {
-    ComplexShift *op;
+    ComplexShift* op;
 
     Rcpp::List args(extra_arg);
 

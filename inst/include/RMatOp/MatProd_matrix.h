@@ -12,13 +12,13 @@ private:
 //  typedef Eigen::Map<Eigen::VectorXd> MapVec;
 
     const double* mat_ptr;
-//  const MapMat mat;
-    const int nrow;
-    const int ncol;
-    
-    const double BLAS_alpha;
-    const int BLAS_one;
-    const double BLAS_zero;
+//  const MapMat  mat;
+    const int     nrow;
+    const int     ncol;
+
+    const double  BLAS_alpha;
+    const int     BLAS_one;
+    const double  BLAS_zero;
 
 
 public:
@@ -34,11 +34,11 @@ public:
 
     {}
 
-    int rows() { return nrow; }
-    int cols() { return ncol; }
+    int rows() const { return nrow; }
+    int cols() const { return ncol; }
 
     // y_out = A * x_in
-    void perform_op(double *x_in, double *y_out)
+    void perform_op(double* x_in, double* y_out)
     {
 /*
         MapVec x(x_in, ncol);
@@ -51,7 +51,7 @@ public:
                         y_out, &BLAS_one);
     }
 
-    void perform_tprod(double *x_in, double *y_out)
+    void perform_tprod(double* x_in, double* y_out)
     {
 /*
         MapVec x(x_in, nrow);
