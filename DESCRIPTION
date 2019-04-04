@@ -1,8 +1,8 @@
 Package: RSpectra
 Type: Package
 Title: Solvers for Large-Scale Eigenvalue and SVD Problems
-Version: 0.13-1
-Date: 2018-05-22
+Version: 0.14-0
+Date: 2019-04-03
 Authors@R: c(
     person("Yixuan", "Qiu", , "yixuan.qiu@cos.name", c("aut", "cre")),
     person("Jiali", "Mei", , "vermouthmjl@gmail.com", "aut",
@@ -30,13 +30,13 @@ Imports: Matrix (>= 1.1-0), Rcpp (>= 0.11.5)
 Suggests: knitr, rmarkdown, prettydoc
 LinkingTo: Rcpp, RcppEigen (>= 0.3.2.2.0)
 VignetteBuilder: knitr, rmarkdown, prettydoc
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 NeedsCompilation: yes
-Packaged: 2018-05-22 20:55:05 UTC; qyx
+Packaged: 2019-04-04 02:16:28 UTC; rho
 Author: Yixuan Qiu [aut, cre],
   Jiali Mei [aut] (Function interface of matrix operation),
   Gael Guennebaud [ctb] (Eigenvalue solvers from the 'Eigen' library),
   Jitse Niesen [ctb] (Eigenvalue solvers from the 'Eigen' library)
 Maintainer: Yixuan Qiu <yixuan.qiu@cos.name>
 Repository: CRAN
-Date/Publication: 2018-05-22 22:37:53 UTC
+Date/Publication: 2019-04-04 04:50:03 UTC
