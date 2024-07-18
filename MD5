@@ -1,4 +1,4 @@
-cb7c46d03ce7cb5ddc313ab46377ab86 *DESCRIPTION
+1248e4b54ad9df950102165b0045e039 *DESCRIPTION
 a82fbcf8508370ccfe7554cd19f4ccd0 *NAMESPACE
 e67c7d3c75556fe906dfe20107b92dda *R/00_eigs.R
 78aed0e329e918874db421e86f3f2b78 *R/10_eigs_real_gen.R
@@ -8,11 +8,11 @@ a6515cf9660c2118122f9a297f50730d *R/40_svds_real_gen.R
 9f9578448c4786495069dc4fd73858a6 *R/50_svds_real_sym.R
 d1695473b2252c55c8c03d5733c03ef7 *R/99_is_sym.R
 ae53fa3cd4682fb21192610b4fa03432 *README.md
-b6c50d5c2f1035b7aa1a49c9383960d1 *build/vignette.rds
-4e6e14929c0a37e57c346fb4714e3b51 *inst/NEWS.Rd
+85d4c4ec710676cdee230fcf7cf025ca *build/vignette.rds
+3b636635962f292e5e6c735da2fea64c *inst/NEWS.Rd
 61a8bbbbd039bf465759a5bdf9e0c7ae *inst/doc/introduction.R
 fab302460209b0833d5cba5ee587636a *inst/doc/introduction.Rmd
-9d57e648856ba3025b4f835a5af26c45 *inst/doc/introduction.html
+53c313b5f3a1166a138ed2cabda383e5 *inst/doc/introduction.html
 d67b195eac1bf6b96235493882b235f9 *inst/examples/eigs.R
 2da11575480cd4ea60afd889cd2405fe *inst/examples/svds.R
 ceeda76aad665f73d8467fb7a9781d95 *inst/examples/svds_center_scale.R
@@ -64,7 +64,7 @@ c49d6c21033263c6cdaf84926e065b91 *inst/include/Spectra/MatOp/SparseGenRealShiftS
 bea9046f9f94cf3aecdeb2c0e1089697 *inst/include/Spectra/MatOp/SparseRegularInverse.h
 7920edc2da77f24097fc9698a6992a81 *inst/include/Spectra/MatOp/SparseSymMatProd.h
 801ae63376b3c59ace9decda5ceaebd7 *inst/include/Spectra/MatOp/SparseSymShiftSolve.h
-ff8df0e08f34a86764524e5b7dfa5eb7 *inst/include/Spectra/MatOp/internal/ArnoldiOp.h
+9cddf172473243ec4b3e01c3d03ca6e2 *inst/include/Spectra/MatOp/internal/ArnoldiOp.h
 11b810543d47f4e4d8fe452f136b0806 *inst/include/Spectra/MatOp/internal/SymGEigsCholeskyOp.h
 4f14debb8370a1d4f8ddf1be01319752 *inst/include/Spectra/MatOp/internal/SymGEigsRegInvOp.h
 6157fb5808354af3ab17b89d78e9d482 *inst/include/Spectra/SymEigsBase.h
